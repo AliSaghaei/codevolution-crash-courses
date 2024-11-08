@@ -1,3 +1,4 @@
+// ***************************************
 //Nested function scope also called lexical scoping:
 // let a = 10;
 // function outer() {
@@ -10,6 +11,7 @@
 // }
 // outer();
 
+// ***************************************
 // Closure :
 // It's a combination of a function bundled together with references to it's surrounding state.
 // closures are created every time a function is created, at function creation time.
@@ -44,6 +46,7 @@
 // hold on to live data betweeen executions. that combination of the function and it's scope chain
 // is what is called a closure in Javascript.
 
+// ***************************************
 //Function Currying:
 // Currying is a process in functional programming in which we transform a function with multiple
 // arguments into a sequence of nesting functions that take one argument at a time.
@@ -66,6 +69,7 @@
 // const curriedSum = curry(sum);
 // console.log(curriedSum(2)(3)(5));
 
+// ***************************************
 // this Keyword:
 // when used in a function it refers to the function it belongs to
 // it makes functions reuseable by letting you decide the object value
@@ -100,7 +104,7 @@
 // sayMyName.call(person);
 
 // new binding:
-// is js you can invoke a function with the "new" keyword
+// in js you can invoke a function with the "new" keyword
 // and in this case the function is invoked with 'this' keyword refrencing an empthy object
 // function Person(name) {
 // this = {}
@@ -121,23 +125,127 @@
 // Order of Precedence:
 // 1.New binding 2.explicit binding 3.implicit binding 4.default binding
 
+// ***************************************
 // prototype:
-function Person(fName, lName) {
-  this.firstName = fName;
-  this.lastName = lName;
-}
-const person1 = new Person('Bruce', 'Wayne');
-const person2 = new Person('Clark', 'Kent');
+// function Person(fName, lName) {
+//   this.firstName = fName;
+//   this.lastName = lName;
+// }
+// const person1 = new Person('Bruce', 'Wayne');
+// const person2 = new Person('Clark', 'Kent');
 // js is a dynamic language so it allows us to attach new properties at an object at any given time
-Person.prototype.getFullName = function () {
-  return this.firstName + ' ' + this.lastName;
-};
+
+// person1.getFullName = function () {
+//   return this.firstName + ' ' + this.lastName;
+// };
+
 // the function getfyllname is specific to the person1
 // console.log(person1.getFullName());
 // console.log(person2.getFullName()); //throws an error
+
+// Person.prototype.getFullName = function () {
+//   return this.firstName + ' ' + this.lastName;
+// };
 // in js every function has a property called prototype that points to an object
 // we can we can make use of that prototype object to determine all our shareable properties.
 // console.log(person1.getFullName());
 // console.log(person2.getFullName());
 
+// ***************************************
 // prototypal inheritance
+// function SuperHero(fName, lName) {
+// this = {}
+//   Person.call(this, fName, lName);
+//   this.isSuperHero = true;
+// }
+
+// SuperHero.prototype.fightCrime = function () {
+//   console.log('Fighting Crime');
+// };
+
+// SuperHero.prototype = Object.create(Person.prototype);
+
+// const batman = new SuperHero('Bruce', 'Wayne');
+// SuperHero.prototype.constructor = SuperHero;
+// console.log(batman.getFullName());
+
+// *************************************************
+// Class
+class Person {
+  constructor(fName, lName) {
+    this.firstName = fName;
+    this.lastName = lName;
+  }
+  sayMyName() {
+    return this.firstName + ' ' + this.lastName;
+  }
+}
+
+const classP1 = new Person('Bruce', 'Wayne');
+console.log(classP1.sayMyName());
+
+class SuperHero extends Person {
+  constructor(fName, lName) {
+    super(fName, lName);
+    this.isSuperHero = true;
+  }
+  fightCrime() {
+    console.log('Fighting Crime');
+  }
+}
+
+const classP2 = new SuperHero('Clark', 'Kent');
+console.log(classP2.sayMyName());
+
+// **************************************************
+// Iterables and Iterators:
+// An object which implements the iterable protocol is called iterable.
+
+// For an object to be iterable it must implement a method at the key [Symbol.iterator]
+// that method should not accept any argument and should return an object which conforms
+// to the iterator protocol
+
+// The iterator protocol decides whether an object is iterator
+// the object must have a next() method that returns an object with two properties
+// value: which gives the current element
+// done: which is a boolean value indicating whether or not there are any more elements that
+// could be iterated upon.
+const obj = {
+  [Symbol.iterator]: function () {
+    let step = 0;
+    const iterator = {
+      next: function () {
+        step++;
+        if (step === 1) {
+          return { value: 'Hello', done: false };
+        } else if (step === 2) {
+          return { value: 'World', done: false };
+        }
+        return { value: undefined, done: true };
+      },
+    };
+    return iterator;
+  },
+};
+
+// for (const word of obj) {
+//   console.log(word);
+// }
+
+// *********************************************
+// Generators:
+// They are special functions that simplify the task of writing iterators
+
+// function normalFunction(){} // normal function does not stop until the lat line is executed
+// the only way t oexit is either returning from it or throwing an error
+
+// Generator functions can stop mid way and then continue from where it has stopped
+function* genetatorFunction() {
+  yield 'Hello';
+  yield 'World';
+}
+const generatorObject = genetatorFunction();
+
+for (const word of generatorObject) {
+  console.log(word);
+}
